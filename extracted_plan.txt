@@ -1,0 +1,481 @@
+Enterprise Sales Agent Platform
+Final product and implementation plan
+Build one application around the ten agents in the supplied project proposal. The product will connect account discovery, researched outreach, inbound conversations, proposals, security reviews, partner development, proof creation and eligible revival through shared records and durable workflows.
+The first release extends the existing GTM platform. It preserves the established contact rules and introduces common orchestration, approvals, evidence, private memory and reviewed learning. The ten agents retain the names and business purposes in the source PDF; the architecture and implementation decisions in this plan are proposed engineering choices.
+Planning field
+Decision
+Initial deployment
+One organization using the platform internally; user, team and record permissions from launch.
+Product packaging
+One dashboard and Python application codebase, with separately scalable background workers.
+Initial channel
+Existing SMS integration. Other channels are enabled individually after readiness checks.
+Operating mode
+Human approval for customer-facing content during the initial 90-day operating policy; any exception requires explicit business authorization.
+Delivery status
+Implementation blueprint. No repository audit, deployment or production validation has been performed.
+Primary users
+Sales, marketing, partner managers, security reviewers, delivery owners and administrators.
+Intended outcome
+A user can open one account and see its evidence, contacts, conversations, meetings, proposals, security answers, approved proof and next actions. Each action is attributable to an agent or human, linked to its source data, and recoverable after interruption.
+How to use the plan
+Sections 1 to 5 explain the product and connections. Sections 6 to 12 follow the main customer journey in working order. Sections 13 to 15 explain the visibility and partner entry points and the revival return path. Sections 16 to 23 retain the technical design, implementation roadmap and release checks.
+1 Scope and decisions that govern the product
+Issue
+Implementation decision
+Ten projects versus ten sequential steps
+Use conditional workflows. Visibility, partner sourcing, research and revival operate on their own triggers; no lead must visit every agent.
+CRM admission
+Keep raw prospects and radar accounts in the application. Preserve positive-lead CRM routing. If HubSpot becomes the prospect master later, change the policy explicitly.
+Follow-up limits
+A campaign cannot send a fourth unanswered outreach attempt. Track logical outreach attempts centrally; technical retries do not reset the counter.
+Revival and old records
+Revival checks current suppression and contact eligibility. A fresh case study, new campaign or new agent does not erase a stop condition.
+Negative and automated replies
+Stop automatic responses and cancel eligible pending actions. Human review can resolve detection errors under recorded authority.
+Fast response and human review
+Measure draft readiness separately from actual response time. A five-minute substantive response needs reviewer coverage or a specifically authorized auto-response category.
+Won deal versus proof
+Proof creation requires verified delivery results and permission. Signing a contract alone is insufficient.
+Enterprise versus resale
+Launch for internal use. Customer resale requires a separate tenancy, billing, support, onboarding and isolation release.
+Included in the first product
+Shared records, all ten agent modules, event-driven handoffs, human work queues, evidence management, private lead memory, integration adapters, reporting and controlled improvement. Existing campaign configuration remains usable while agent-assisted configuration can be added later.
+Explicit boundaries
+Project delivery remains owned by the delivery team or its existing system. Legal acceptance, commercial commitments and security attestations remain assigned human responsibilities. Demos use public or synthetic data. Direct autonomous code deployment and unrestricted external tool execution are outside the initial release.
+2 User experience and operating ownership
+Workspace
+Primary experience
+Overview
+New leads, pipeline changes, pending reviews, failed work and next actions.
+Accounts and contacts
+Identity, source evidence, research, owner, permissions and full activity timeline.
+Campaigns and inbox
+Target lists, outreach drafts, live replies, suggested responses and takeover.
+Deals and meetings
+Qualification, discovery notes, proposals, pricing assumptions and next steps.
+Partners
+Partner prospects, reviewed pitches, agreement status and referral attribution.
+Security desk
+Questionnaire assignments, evidence, unresolved questions and approvals.
+Proof and visibility
+Client-approved case studies, content drafts and recorded visibility observations.
+Revival
+Eligible dormant records, current reason to reconnect and review decisions.
+Knowledge and operations
+Approved facts, learning releases, integration health, runs, audit and budgets.
+Role assignments
+Sales representatives own conversations and outreach reviews. Sales managers approve commercial exceptions and assignments. Marketing owns content and visibility. Partner managers own partner relationships. Security reviewers approve factual security answers. Delivery owners verify project results. Administrators manage integrations and access; administrative access does not automatically grant commercial or security sign-off.
+One approval center
+Every review item shows the account, requested action, exact artifact version, relevant context, source evidence, risk flags and due time. Available actions are approve, edit and approve, reject, request revision, assign, or take over. A new relevant message invalidates a stale response approval. Approval is not proof of current send eligibility; eligibility is rechecked at execution.
+Account timeline
+Display agent tasks, human decisions and external outcomes chronologically with correlation IDs. Distinguish draft, approved, submitted, delivered, booked and confirmed states. Never show a successful external action merely because an agent proposed it.
+3 The correct working order
+The main journey is: find a suitable company, research it, contact it with a useful message, handle the reply, meet the buyer, prepare the proposal, resolve security questions, deliver the project and create proof. The table below shows which agent owns each step.
+Step
+Agent
+Next action
+1
+Buying-Signal Radar
+Find a suitable company and send its evidence to Research & Personal Outreach.
+2
+Research & Personal Outreach
+Research the company and draft a personal message. Ask for a demo only when useful.
+3
+Demo Before Hello
+Return the demo to Outreach. A human reviews the message before it is sent.
+4
+24/7 Lead Responder
+Start when a lead replies or sends an inquiry. Answer questions and arrange discovery.
+5
+Deal Desk
+Start after discovery finishes. Prepare the proposal and request security help if needed.
+6
+Trust & Security Desk
+Return reviewed security answers to Deal Desk and the salesperson.
+7
+Proof Engine
+Start after the team delivers verified results and obtains client permission.
+Where the other three agents connect
+AI Search Visibility helps buyers discover your company. Their inquiries go directly to the Lead Responder. Partner Finder uses Outreach for partner messages; partner-referred buyers also go directly to the Lead Responder. Revival prepares approved reconnect messages for eligible old leads; a new reply returns to the Lead Responder.
+What starts the next step
+The orchestrator starts work when the required event happens. Research waits for an account; the Responder waits for a reply or inquiry; Deal Desk waits for completed discovery; Proof waits for verified results. A failed task is retried or assigned to a person. Completing one task does not authorize sending or force every lead through every agent.
+3 Working flow diagram
+Read the main path from top to bottom. Demo and security review run only when needed. Visibility and partners bring additional leads into the same application. Revival returns an eligible old lead to the conversation flow. Every message still follows the shared approval and sending rules.
+Your sales and delivery team works between the proposal and the case study: the contract must be signed, the work delivered and the results verified. The Proof Engine cannot start merely because a proposal was sent. These are business steps; the development build order is listed separately in section 22.
+4 Technical architecture and stack
+Recommended stack: Python application modules and FastAPI where new API boundaries are needed; PostgreSQL for business state; full-text search and optional pgvector for retrieval; Temporal Python workflows for durable execution; managed object storage for files; the existing enterprise identity provider and managed secret store; OpenTelemetry for traces and metrics. Reuse the current UI and integrations.
+The orchestrator executes explicit workflow definitions. LLM calls and integration calls run as bounded activities. The model proposes content and structured decisions; deterministic services authorize side effects. Existing Celery jobs may remain adapter tasks, but one workflow engine owns each process. MCP may expose selected typed tools; it does not replace the workflow engine or authorization.
+5 Workflow contracts and handoff conditions
+Event
+Recipient and prerequisite
+account.prioritized
+Research Agent after verified identity, fresh source evidence and duplicate checks.
+research.completed
+Outreach drafting; optional demo request for approved high-priority accounts.
+demo.ready
+Attach the validated demo version to outreach review; do not send automatically.
+outreach.approved
+Action service rechecks approval, contact eligibility, attempt count and sender limits.
+message.received
+Lead Responder after durable ingest; opt-out and known suppression get priority.
+meeting.confirmed
+Update timeline and deal owner. Wait for discovery completion before proposal drafting.
+discovery.completed
+Deal Desk when notes, owner, scope inputs and recording permission are available.
+security_review.requested
+Trust Desk from an active deal or direct authorized request.
+delivery_milestone.verified
+Proof Engine after a delivery owner validates measurements.
+proof.approved
+Publish only to allowed audiences; enable scoped reuse by relevant agents.
+revival.review_requested
+Human reviews an eligible record and fresh reason; no automatic suppression reset.
+Common envelope and result contract
+Every event carries event_id, schema_version, event_type, organization_id, account_id, contact_id when relevant, workflow_id, task_id, occurred_at, correlation_id and an artifact reference with version. Store sensitive content in controlled records rather than duplicating complete transcripts in events.
+Every agent returns status, structured result, artifact references, evidence references, uncertainty, proposed next actions and cost metadata. Status is completed, waiting_for_input, waiting_for_review, blocked, retryable_failure, terminal_failure or cancelled. An agent cannot promote its own proposal into an authorized external action.
+Concurrency and bounded loops
+Process conversational writes under a conversation version and short lease. Account research may run concurrently with unrelated conversations. Prevent overlapping outreach and revival for the same contact. Limit draft revisions and retries per workflow; route unresolved work to an owner. Check cancellation and changed policy before resuming any waiting task.
+6 Flow step 1 Buying Signal Radar
+This is the first step for finding new outbound prospects. It finds companies with a current reason to need your service and passes them to Research & Personal Outreach.
+When it starts and what it needs
+Start on a scheduled scan or explicit account refresh. Inputs are the approved ICP, target account list, permitted source access, signal definitions, previous observations and account identities. The source PDF proposes twenty accounts per day; treat this as a capacity and quality target, not a guaranteed output.
+What it does step by step
+1. Resolve company identity and domain before associating source material. Collect dated evidence from approved research or enrichment sources.
+2. Classify signals such as growth, relevant hiring or leadership changes; store observed facts separately from inferred business needs.
+3. Score fit, recency and relevance using a versioned rubric. Remove duplicates and stale evidence; publish a short reason and uncertainty.
+4. Save the prioritized account and emit account.prioritized. Reuse current research or request Research & Personal Outreach Agent.
+What it passes to the next step
+Output is a ranked account record with source URLs or document references, observed_at, signal_type, score_version and why_now. Raw prospects remain in the application. Revival Agent may use a new signal only after eligibility checks.
+When it waits or stops
+If a source is unavailable, retain last observed timestamps and mark coverage incomplete. Do not invent a signal or silently treat old information as current. A contact match requires stronger identifiers than a name alone.
+How we check that it works
+Acceptance: all promoted accounts have attributable evidence, canonical identity and reproducible scores. Measure evidence freshness, accepted-account rate and qualified meetings by signal cohort. Reweight only after reviewed evaluation.
+7 Flow step 2 Research and Personal Outreach
+This agent studies the selected company and prepares a useful personal message. It requests a demo for selected accounts. After human approval, the sending service delivers the outreach and waits for a reply.
+When it starts and what it needs
+Start on account.prioritized, an approved partner prospect or an authorized manual account request. Inputs are account identity, fresh signals, contact data, product fit, approved proof and the current contact eligibility snapshot.
+What it does step by step
+1. Read approved public sources and produce a brief with facts, likely problems labeled as hypotheses, potential stakeholders and a proposed use case.
+2. Check whether current research and a draft already exist. Select a template and channel appropriate to the audience.
+3. For designated top accounts, request Demo Before Hello and wait for a validated demo or an explicit decision to continue without one.
+4. Generate a concise sourced draft, run content checks and create an approval item. After approval, submit an action command rather than calling a provider directly.
+What it passes to the next step
+Outputs are a research brief and immutable outreach draft with source references and optional demo ID. The sending service owns identity, rate limits, idempotency and attempt counters. Replies trigger 24/7 Lead Responder; the first outreach agent then stops sending into that active conversation.
+When it waits or stops
+Invalid contact details, stale evidence, negative or bot suppression, exhausted attempts and competing campaigns block execution. LinkedIn content is a draft for manual sending under the source policy. Track recorded manual sends to prevent later duplication.
+How we check that it works
+Acceptance: one logical action per approved draft; all specific claims supported; no fourth unanswered attempt. Measure reviewer effort, qualified reply rate and unwanted-contact indicators. Use comparable account cohorts when evaluating improvement.
+8 Flow step 3 Demo Before Hello when needed
+This optional agent builds a small demo for a selected prospect. It returns the demo to Research & Personal Outreach so the reviewed message can include it. It does not start a separate competing outreach campaign.
+When it starts and what it needs
+Start only after an approved demo request with account, use case, template, budget and deadline. Inputs are public company information or synthetic samples, product capabilities and approved research from Research & Personal Outreach Agent.
+What it does step by step
+1. Choose a supported template and define one demonstrable user task with visible limitations.
+2. Populate configuration and synthetic examples. Execute checks in a restricted demo environment separate from customer and production systems.
+3. Verify the demonstration, redact secrets, create a private access path with expiry and prepare a walkthrough script or recording task.
+4. Save demo version and validation result; emit demo.ready to Research & Personal Outreach Agent. Record authorized engagement observations and notify the sales owner.
+What it passes to the next step
+Outputs include demo artifact, audience, expiry, test evidence, walkthrough and research references. A demo opening alone does not authorize a new message or establish buying intent. If the prospect asks a question, 24/7 Lead Responder receives it with demo context.
+When it waits or stops
+Template failures return a technical review item. Publicly available data is still checked for relevance and permission to reuse. Never ingest real patient or customer records into the sales demo. Arbitrary generated code is excluded from the first release.
+How we check that it works
+Acceptance: template tests pass, no production credentials are present, unauthorized access is blocked and expiry works. Measure effort per validated demo, engagement quality and meeting conversion on comparable selected accounts. Video production may remain human-assisted initially.
+9 Flow step 4 Lead Responder
+This agent starts when a lead replies or sends an inquiry. It answers questions, learns what the lead needs and arranges a meeting. Once discovery has actually happened, the notes go to Deal Desk.
+When it starts and what it needs
+Start on a verified inbound event from an enabled channel. Initial scope uses existing SMS; web, email, chat and voice are separate connector releases. Inputs include current conversation, lead memory, campaign rules, approved knowledge and relevant reviewed examples.
+What it does step by step
+1. Persist the event and processing record before acknowledgment; deduplicate and resolve identity. Apply known suppression and detect new negative, bot and opt-out signals.
+2. Classify intent and load scoped memory. Answer the actual question, ask only missing qualification questions and avoid repeating prior requests.
+3. Create a grounded draft and approval request. Revalidate on new messages or human takeover. Only the action executor can send.
+4. For a meeting request, resolve timezone, offer availability, obtain explicit selection, recheck and book through the existing calendar service. Record provider outcome before confirming.
+5. Update private memory and qualification evidence. Route eligible positive leads to CRM; wait for completed discovery before starting Deal Desk Agent.
+What it passes to the next step
+Outputs are intent, sourced memory updates, reply draft, approval state, meeting record and conversation summary. Security questions can request Trust & Security Desk Agent evidence at any stage. Private memory never becomes a shared training example automatically.
+When it waits or stops
+Unknown claims go to a person. Booking races require refreshed options. Provider timeout becomes SEND_UNKNOWN until reconciled. Three unanswered outreach attempts, negative replies and bot replies retain their established stops; no campaign switch bypasses them.
+How we check that it works
+Acceptance: duplicate and stale sends are prevented; lead facts remain isolated; booking confirmation reflects an actual event. Track draft latency, approval wait, response latency, factual errors, qualified meetings and stop violations separately.
+10 Flow step 5 Deal Desk
+This agent starts after the discovery meeting. It turns the agreed needs into a proposal for human review. If the buyer asks security questions, it requests help from the Trust & Security Desk.
+When it starts and what it needs
+Start on discovery.completed or a deliberate proposal revision request. Inputs are approved call notes or consented recording, account and deal history, qualification evidence, scope templates, pricing rules and relevant approved proof.
+What it does step by step
+1. Extract needs, stakeholders, numbers, timeline, objections and unresolved questions with references to notes or transcript spans.
+2. Distinguish buyer statements from salesperson assumptions. Ask the owner to resolve missing scope or commercial inputs.
+3. Prepare a proposal and follow-up draft with deliverables, exclusions, dependencies, acceptance terms and explicit ROI assumptions. Offer a pilot only where an approved package exists.
+4. Request Trust & Security Desk Agent for relevant security questions. Save proposal versions and collect commercial and technical reviews before release.
+5. Update CRM-owned fields through the synchronization adapter with field ownership checks. Wait for buyer response; do not mark a deal won based on model sentiment.
+What it passes to the next step
+Outputs are discovery summary, proposal artifact, follow-up draft, deal updates and owner tasks. A signed contract is recorded by an authorized human or verified contract integration. Delivery then occurs outside these ten sales agents.
+When it waits or stops
+Conflicting price versions, missing assumptions and unapproved contractual promises block sending. A stalled proposal may become a revival review candidate later, subject to contact policy; it does not start automatic repeated follow-ups.
+How we check that it works
+Acceptance: quoted prices and commitments have approved sources, revisions supersede prior versions and external send status is traceable. Measure proposal readiness time excluding missing inputs, approval delay and proposal-to-win conversion.
+11 Flow step 6 Trust and Security Desk when needed
+This agent starts when security information is requested. It prepares answers from approved evidence and returns reviewed answers to Deal Desk and the salesperson. It can also help the Lead Responder earlier in the conversation.
+When it starts and what it needs
+Start on a questionnaire upload, buyer security question, or approved refresh of trust content. Inputs are current policies, validated architecture and data-flow documents, certifications actually held, prior approved answers, contracts and audience permissions.
+What it does step by step
+1. Parse the document or spreadsheet while preserving question IDs, requested format and sections. Route unsupported portal entry to a manual task.
+2. Retrieve approved evidence with effective dates and access restrictions; draft an answer with source references and an applicability note.
+3. Mark unanswered, conflicting or expired evidence explicitly. Route each gap to the responsible security or technical owner.
+4. Review the complete response and approve the exact export version. Submit through an authorized integration or manual task and record the submission outcome.
+What it passes to the next step
+Outputs are answered questionnaire, evidence register, gap list, reviewer decisions and restricted trust assets. Deal Desk Agent consumes approved deal-specific answers; 24/7 Lead Responder uses only approved response-safe excerpts. Public trust content requires separate publication approval.
+When it waits or stops
+Never infer a certification, data residency commitment or control from marketing language. Detect unsupported checkbox assertions. Confidential audit documents remain access-controlled and are not added to a public proof library.
+How we check that it works
+Acceptance: every affirmative factual claim has applicable evidence or an identified human attestation; all unknowns are visible. Test extraction against question counts to detect dropped questions. Measure draft completeness, reviewer corrections and time waiting on evidence; do not use answer volume alone as a success metric.
+12 Flow step 7 Proof Engine after delivery
+This agent starts after your delivery team has produced and verified results. It prepares a case study, obtains client permission and makes the approved proof available for future sales and marketing.
+When it starts and what it needs
+Start at a verified project milestone or a deliberate case-study request. Inputs include baseline and after measurements, measurement periods, delivery notes, client quote permissions and audience restrictions. Won-deal status alone is insufficient.
+What it does step by step
+1. Collect metrics through a structured request. Record measurement method, sample, timeframe and attribution limitations.
+2. Validate before-and-after comparability and route unsupported numbers back to the delivery owner.
+3. Draft a case study, short sales snippets and optional social content from the verified evidence. Produce an anonymized version when required.
+4. Obtain client permission specifying names, logos, quotes, figures and allowed audiences. Then obtain internal publication approval.
+5. Publish through the authorized channel or create a manual task. Index approved reusable snippets with expiry and permission scope.
+What it passes to the next step
+Outputs are proof artifacts and permission records. Visibility, Partner Finder, Outreach, Demo, Lead Responder, Deal Desk and Revival retrieve only versions permitted for their purpose. Review requests and referral requests are separate person-directed actions requiring explicit approval.
+When it waits or stops
+Anonymization is reviewed for indirect identification, not just removal of names. If permission expires or is withdrawn, retire the asset, remove it from new retrieval and create takedown tasks for published locations; preserve necessary audit history.
+How we check that it works
+Acceptance: every metric and quote has evidence, all publications have permission and restricted material cannot appear in general responses. Measure approved proof coverage by use case, freshness and sales reuse; never invent a client review or quote to meet a target.
+13 Additional lead source AI Search Visibility
+This agent runs alongside the main sales flow. It improves approved public content so buyers can find your company. A buyer who sends an inquiry enters directly at the Lead Responder.
+When it starts and what it needs
+Start a scheduled measurement run or respond to a newly approved case study. Inputs include buyer questions, geographic and product scope, prior observations, approved company descriptions, content inventory and supported monitoring integrations.
+What it does step by step
+1. Record the service, query, date, configuration and observed mentions or citations for each measurement.
+2. Separate company-name ambiguity, missing use-case content and missing proof. Compare like-for-like observations over time.
+3. Draft a specific content brief or revision using approved knowledge and Proof Engine proof; show the sources supporting claims.
+4. Submit content for review. Publish through an authorized connector or create a manual publishing task, then record the resulting URL.
+What it passes to the next step
+Outputs are a visibility scorecard, coverage report, content backlog and versioned drafts. Approved pages can attract inbound inquiries that enter 24/7 Lead Responder. Store source attribution when the prospect supplies it.
+When it waits or stops
+If a consumer search surface cannot be measured through a permitted integration, mark it unobserved or collect reviewed manual observations. A model API answer is not proof of the consumer product result. Do not promise rankings or guaranteed mentions.
+How we check that it works
+Acceptance: every reported observation is reproducible to its recorded context and no content publishes without permission. Track observed mention rate with coverage denominator, approved pages and attributable inbound leads; treat the source PDF targets as hypotheses.
+14 Additional lead source Partner Finder
+This agent runs alongside direct customer acquisition. It finds potential partners and asks Research & Personal Outreach to prepare partner messages. Leads referred by a partner enter at the Lead Responder.
+When it starts and what it needs
+Start scheduled prospect discovery, an inbound partner inquiry or a signed-partner enablement cycle. Inputs are partner criteria, public evidence, current relationship records, approved offers and the authorized proof library.
+What it does step by step
+1. Deduplicate firms against customer and partner records. Identify verified service fit and separately label inferred capability gaps.
+2. Create a partner brief and propose referral, co-selling or white-label options within approved commercial boundaries.
+3. Route the brief to Research & Personal Outreach Agent for a partner-specific outreach draft or the partner manager for review. Replies enter 24/7 Lead Responder with relationship_type=partner.
+4. After an agreement is confirmed, assemble reviewed enablement kits from approved demos and proof. Register referrals and link them to opportunities.
+What it passes to the next step
+Outputs include partner profile, evidence, pitch draft, agreement status, kit version and referral attribution. Referred leads go to 24/7 Lead Responder without requiring a cold campaign. Deal Desk Agent can assist commercial documents; humans approve terms.
+When it waits or stops
+An unverified agreement never grants access to customer data. Duplicate referrals are resolved by an owner using recorded timestamps and attribution policy. Missing partner economics or IP terms block commitment drafting.
+How we check that it works
+Acceptance: each partner-sourced opportunity has a verified relationship and source; kits respect asset audience restrictions. Measure accepted partner prospects, active partners and qualified partner pipeline. Referral fee payment and partner billing are separate later capabilities.
+15 Return path Revival Agent
+This agent checks eligible old leads and stalled deals for a valid new reason to reconnect. It prepares a message for review. When the lead replies, the conversation returns to the Lead Responder. It never clears stop rules automatically.
+When it starts and what it needs
+Start a scheduled scan or a new signal or proof event. Inputs include dormant deal state, previous contact history, stop reasons, request-to-contact dates, current ownership, champion identity and fresh relevant evidence.
+What it does step by step
+1. Exclude opt-outs and suppressed contacts before drafting. Check attempt history and whether another campaign or human already owns active contact.
+2. Distinguish explicit future-contact requests from unanswered outreach, negative replies, bot messages and closed-lost outcomes.
+3. Find a fresh, factual reason such as an approved capability update or relevant case study. Verify changed employer identity before creating a new account association.
+4. Create a reconnect recommendation with eligibility reason and draft. A human approves within current policy; missing eligibility becomes a blocked review task.
+5. After authorized sending, wait for an actual reply. Route it to 24/7 Lead Responder with historical context and track restored pipeline attribution.
+What it passes to the next step
+Outputs are reviewed candidates, evidence, outreach draft and revival outcomes. A new campaign ID, elapsed time, case study or champion job change cannot automatically clear a stop. Any policy-authorized re-engagement needs recorded authority; opt-out remains a hard exclusion.
+When it waits or stops
+Conflicting ownership is resolved before sending. A bounced address is not replaced with a guessed address. A revived opportunity should not be counted as new sourced pipeline again without the reporting definition distinguishing the two.
+How we check that it works
+Acceptance: suppression and attempt limits hold across agents and campaigns; no duplicate contact with active outreach; returned conversations retain earlier commitments. Measure eligible candidates, approved sends, qualified revived meetings and incremental restored pipeline.
+16 Shared data model and record ownership
+Domain
+Entities and required constraints
+Identity and access
+organizations, users, memberships, roles, record_grants. Scope every query and tool call; never trust a model-supplied scope.
+Sales records
+accounts, contacts, campaigns, opportunities, partners, referrals. Canonical IDs, verified external IDs and explicit merge history.
+Conversations
+conversations, messages, outreach_attempts, suppression_entries. Unique provider/account event identity; versioned state and central attempt accounting.
+Agent execution
+workflow_runs, agent_tasks, domain_events, outbox_events, integration_attempts. Unique task/event keys and immutable execution outcomes.
+Artifacts and evidence
+research_briefs, signals, demos, proposals, questionnaires, proof_assets, evidence_refs. Version, owner, status, audience and validity.
+Intelligence
+memory_facts, summaries, knowledge_versions, response_feedback, learning_candidates, example_versions, evaluation_runs, releases.
+Governance
+approvals, client_permissions, policy_versions, audit_events, retention_actions. Bind decisions to exact versions and authorized actors.
+System of record
+The application owns agent tasks, drafts, evidence, memory and approval state. CRM owns sales-managed deal stage, deal owner and agreed commercial fields unless the repository discovery confirms another contract. Map shared fields explicitly and store external IDs, version or last-modified values, origin and sync status. Replayed CRM events must not create an update loop.
+If both systems modify a shared field concurrently, route the conflict to its owner rather than silently accepting last-write-wins. Successful CRM synchronization is independent from successful message delivery. Unqualified prospects remain in the application under the existing positive-lead routing policy.
+Identity and record merging
+Use organization scope, verified provider identifiers and approved normalization rules. Names alone are insufficient. Human-approved merges preserve old IDs as aliases, migrate ownership deliberately, and carry the stricter suppression state. A partner referral never grants access to the referred customer’s private transcript.
+Retention and deletion
+Define durations by record class and contractual policy during discovery. Deletion propagates to summaries, embeddings, caches and derived learning candidates. Backups follow expiry and restoration procedures. Preserve only authorized audit or legal-hold records; production conversation bodies stay out of ordinary logs.
+17 Durable execution and recovery design
+Workflow ownership
+Use short workflows for bounded research and artifact generation, conversation workflows for responses, and deal workflows for longer waits. Do not create one endless workflow for the entire company. Store business records in PostgreSQL and use the workflow engine for execution history, timers and waits. Version workflow definitions so deployments do not break in-flight execution.
+Inbound and outbound transaction boundaries
+Inbound: verify provider authenticity, deduplicate, persist the message and pending event atomically, then acknowledge. A dispatcher starts or signals the workflow using a stable key.
+Processing: read a conversation version, acquire a short lease, gather context, perform external or model work outside database transactions, and save only if the version is still current.
+Approval: persist the reviewer decision against the artifact version. Signal the waiting workflow idempotently; duplicate clicks cannot create duplicate sends.
+Outbound: atomically create an authorized command after current policy checks. Execute externally, persist the provider result, and reconcile uncertain outcomes. External acceptance and database commit are not one transaction.
+Condition
+Required recovery
+Worker or process failure
+Replay or resume durable work; side-effect keys prevent repeat actions.
+Rate limit or transient outage
+Bounded backoff with jitter, provider guidance and per-dependency circuit breaker.
+Unknown send result
+SEND_UNKNOWN state; query provider or manual reconciliation before another attempt.
+Stale context or approval
+Cancel or regenerate the draft; require fresh approval for changed content.
+Permanent validation failure
+Terminal task with owner, reason and preserved evidence; no endless retry.
+Suppression during queued work
+Cancel eligible pending commands and block execution. Already accepted messages may be unretractable.
+State and action rules
+Separate lead status, conversation state, workflow state, artifact approval state and delivery state. A draft can be approved while delivery is blocked. A lead may be qualified while CRM sync is pending. Retry limits, action expiry and revision limits are versioned configuration. Manual replay always rechecks present policy and permissions.
+18 Memory learning and model governance
+Four context scopes
+Contact memory stores preferences, questions and commitments for an individual. Account memory stores verified organization facts and needs. Deal memory stores scope, stakeholders and objections. Shared knowledge contains approved business facts and anonymized reviewed examples. Enforce scope before ranking or retrieval, including vector searches.
+Memory update algorithm
+Extract candidate facts with source spans after a processed turn or verified action. Validate schema and identity in application code. Prefer newer explicit statements for mutable preferences; retain superseded history. Flag conflicting consequential facts for review. Version summaries with their last included message, and retain relevant recent messages alongside the summary.
+Improvement lifecycle
+Captured feedback → reviewed candidate → anonymization → evidence check → offline evaluation → authorized release → limited rollout → monitoring or rollback. Candidates cannot be retrieved by live agents. Model output must never become approved knowledge simply because it was generated or previously sent.
+Record original draft, human revision, reviewer, correction labels, source versions and outcome context.
+Build a held-out evaluation set that excludes candidate-selection examples. Include non-converters, negative replies, bot replies, private-data probes and conflicting evidence.
+Evaluate each agent against its purpose: evidence precision for research and security, relevant responses for conversations, factual scope for proposals, permission compliance for proof.
+Release an immutable bundle of prompt, example set, retrieval settings and model route. Keep a known-good rollback target and revalidate affected in-flight drafts.
+Model gateway
+Use approved provider and model routes with structured schemas, token limits, timeouts, cost budgets and redaction. A fallback must satisfy the same privacy and quality requirements; otherwise create a review task. Keep network and tool permissions server-controlled. Model self-reported confidence is not sufficient evidence for auto-sending.
+Initial approach
+Begin with grounded prompts, retrieval, lead memory and reviewed examples. Fine tuning is optional after enough high-quality examples exist and held-out evaluation shows improvement. The product does not automatically train model weights after each conversation. Shared learning cannot weaken suppression, access or approval rules.
+19 Integration contracts and API boundaries
+Integration
+Initial contract and fallback
+Existing GTM and SMS
+Reuse listener and sender through typed adapters. Confirm signatures, account IDs, rate limits, receipt semantics and idempotency support.
+CRM and enrichment
+The PDF names HubSpot and Apollo; confirm licensed access and actual deployed CRM. Use explicit field ownership, incremental sync and deduplication.
+Calendar
+Reuse Microsoft Calendar integration. Require organizer authorization, timezone, selected slot, recheck and booking ID before confirmation.
+Approval notifications
+Use the application as the source of truth; extend the existing Teams path if available. Slack or WhatsApp notification support is optional.
+Research and visibility
+Use approved sources and supported monitoring connectors. Store provenance, observation context and unavailable coverage.
+Content publishing
+Reviewed drafts only. Record destination, exact version, approval and publish result; provide manual completion when no connector exists.
+Recordings and documents
+Use consented recordings and verified uploads. Preserve extracted question IDs, source page references and parsing warnings.
+Suggested application endpoints
+POST /webhooks/{provider}; GET /accounts/{id}; GET /conversations/{id}; POST /agent-runs; GET /workflow-runs/{id}; POST /artifacts/{id}/approve; POST /conversations/{id}/takeover; POST /demo-requests; POST /discovery-records; POST /security-reviews; POST /proof-permissions; POST /learning-releases/{id}/activate. Existing endpoints take precedence where equivalent behavior is already implemented.
+Standard action contract
+Each action accepts an authenticated actor, resolved organization scope, target record ID, immutable artifact version, expected record version, approval reference and idempotency key. The server resolves sender credentials and permissions. Return accepted, blocked, completed, failed or unknown with reason codes and provider reference where available.
+Human completion paths
+Manual LinkedIn sending, unsupported questionnaire portals, client permission collection and some demo recordings remain trackable tasks. A human records completion with evidence. The next workflow starts from verified completion, not merely from creating the task.
+20 Security approval and enterprise release boundaries
+Permissions and trust boundaries
+Use the existing enterprise identity provider and role-based permissions combined with record ownership. Apply authorization to database reads, retrieval, exports, tool calls and approval endpoints. Security-review evidence may have a narrower audience than a deal record. Every agent runs with the minimum service permissions its task requires.
+Action
+Authority and execution requirement
+Outreach and lead reply
+Sales reviewer approves exact content; current suppression and attempt checks still apply.
+Proposal and pricing
+Designated commercial approver; technical owner verifies delivery assumptions.
+Security attestation
+Security reviewer confirms evidence and unresolved gaps.
+Private demo release
+Technical validation plus sales approval; scoped access and expiration.
+Case study publication
+Recorded client permission for specific content and audience plus internal publication approval.
+Shared learning activation
+Quality or knowledge owner approves passing evaluation and rollback target.
+Policy or permission change
+Authorized administrator or business owner with an audit reason; no agent self-authorization.
+Technical protection
+Validate webhook signatures and replay windows. Store secrets in a managed vault, encrypt transport and storage, and redact sensitive logs. Treat retrieved pages, documents and lead messages as untrusted content. Validate file type and size, scan uploads, isolate demo execution and restrict outbound network access to block access to internal services through supplied URLs.
+Data handling and model providers
+Confirm model-provider retention, training use, processing region and contractual terms before production. Do not assume the aggregator or downstream provider excludes training. Send only necessary fields. Public research content never grants access to private lead records. Sales demos must not contain real patient or customer datasets.
+Customer resale gate
+Organization IDs prepare the schema for future expansion but do not prove multi-tenant isolation. Before selling hosted access, implement and test tenant-specific credentials, storage and retrieval boundaries, quotas, onboarding, billing, export/deletion, support access and contractual responsibilities. Keep customer product rollout separate from the internal release.
+21 Operations service targets and cost model
+Proposed targets for validation
+Measure
+Initial planning target or rule
+Owned service availability
+99.9% monthly for intake and processing; report provider and reviewer delays separately.
+Webhook acknowledgment
+p95 within 2 seconds after durable persistence at the agreed load.
+Response draft readiness
+p95 within 30 seconds for supported text requests at agreed load.
+Actual lead response
+Five-minute business target only where staffing or authorized auto-response makes it achievable.
+Suppression and isolation
+Zero violations in release acceptance tests; investigate every production incident.
+Recovery planning
+Candidate RPO 5 minutes and RTO 60 minutes for regional disaster; accepted-event process recovery is separate. Validate backup and failover capability before commitment.
+Quality and business outcomes
+Set per-agent thresholds from labeled baselines; source PDF growth targets are experiments, not contractual guarantees.
+Monitoring and runbooks
+Monitor oldest pending event, approval age, workflow failures, provider limits, model latency, cost, unknown sends, synchronization backlog, retrieval failures and quality regressions. Prioritize conversation workers above research and learning jobs. Provide global, channel, campaign and conversation send-pause controls with tested operator procedures.
+Runbooks cover dependency outage, leaked credentials, duplicate send, suppression failure, corrupted knowledge, stale learning release and failed restore. Each runbook identifies the owner, immediate containment, evidence to inspect, safe replay criteria and resumption authority. Test restore and replay in staging.
+Capacity and cost planning
+Estimate monthly model cost as the sum of per-agent runs multiplied by measured input and output tokens and the selected model rates, plus embeddings, research/enrichment fees, messaging segments, storage, workflow infrastructure and monitoring. Human review effort equals review count multiplied by observed review minutes. Use current vendor quotes before setting a monetary budget.
+Benchmark typical, long and adversarial conversations; campaign reply bursts; questionnaire parsing; and concurrent demo builds. Set worker concurrency against provider quotas and database capacity. Cache current approved research, reuse artifacts by version and impose per-run and daily budgets. A budget limit must pause work visibly rather than silently degrade factual checks.
+22 Delivery roadmap and engineering work packages
+Planning estimate: 20 weeks for an integrated initial release with four engineers, one QA engineer and part-time product, sales, security and delivery owners. This assumes reusable GTM integrations and timely API access. Repository discovery must replace this estimate with a sized backlog. Business results for visibility and partnerships can take longer than implementation.
+Period
+Deliverables and exit evidence
+Weeks 1 to 2
+Discovery: source inventory, current architecture, canonical IDs, integration contracts, policy decisions, representative data and test baselines.
+Weeks 3 to 4
+Foundation: identity, shared records, workflow execution, outbox, approval center, audit, secrets and staging.
+Weeks 5 to 7
+24/7 Lead Responder: reliable inbound, private memory, sourced drafts, takeover, existing calendar and eligible CRM sync. Demonstrate one complete response workflow.
+Weeks 8 to 10
+Buying-Signal Radar and Research & Personal Outreach: evidence-backed signal research and reviewed outreach. Validate attempt accounting and reply handoff.
+Weeks 11 to 13
+Deal Desk and Trust & Security Desk: completed-discovery proposals, questionnaires, evidence and commercial/security approvals.
+Weeks 14 to 15
+Proof Engine and Revival: verified proof, client permissions and policy-controlled revival.
+Weeks 16 to 18
+Partner Finder, AI Search Visibility and Demo Before Hello: partner flow, supported visibility monitoring and template-based private demos.
+Weeks 19 to 20
+Integrated pilot: cross-agent scenarios, recovery, load, access testing, operational training and staged rollout.
+Team allocation
+A backend/workflow engineer owns state and execution. An AI engineer owns retrieval, schemas and evaluation. An integration engineer owns GTM, CRM and calendar adapters. A full-stack engineer owns the operator experience. QA maintains replay, access, race-condition and acceptance suites. Product and business reviewers supply decisions and labeled feedback.
+First engineering backlog
+Create the repository module boundaries and CI checks; map existing provider contracts; migrate canonical records; implement one inbound event and one approval-bound outbound action; add audit and correlation IDs; build the inbox and approval center; create a regression dataset; demonstrate crash recovery and stale-draft rejection before expanding agent coverage.
+Migration and release
+Backfill identities, existing suppressions and attempt history before any new sending path is enabled. Run shadow processing against existing flows, compare results and enable one supervised campaign cohort. Keep one sender authority per channel and preserve a rollback route to the existing system without dual sending.
+23 Acceptance gates open decisions and references
+Release scenario
+Required evidence
+Acquisition to response
+Radar account → sourced research → approved outreach → reply → contextual response; no duplicate contact.
+Discovery to proposal
+Completed discovery → reviewed scope and price → optional security review → authorized proposal.
+Delivery to proof
+Verified outcome → client permission → approved publication → correctly scoped reuse.
+Partner and revival
+Referral attribution retained; dormant lead eligibility checked; suppression never reset automatically.
+Memory and learning
+No cross-lead leakage; changed preferences respected; candidate examples excluded until evaluated release.
+Failure and race conditions
+Crash, duplicate event, stale approval, calendar collision, provider ambiguity and CRM outage recover safely.
+Operational readiness
+Restore exercise, pause controls, ownership, budget limits, telemetry and reviewer training completed.
+Decisions to close during discovery
+Confirm repository and current schema; actual CRM and licensed data sources; contact-attempt scope; sender providers and channel readiness; reviewer coverage; authoritative pricing and security sources; model-provider terms; hosting and recovery requirements; file retention; pilot volume; and customer-resale scope. Until resolved, use approval-required sending, SMS first, existing positive-lead CRM admission and no automated suppression reset.
+Definition of the final product release
+All ten modules are available through one application with documented triggers, typed outputs, working handoffs, tested access boundaries and human work queues. Production activation follows demonstrated acceptance evidence. Documentation and mockups alone do not constitute deployed enterprise capability.
+Source basis and technical references
+S1  Supplied PDF: 10 Agentic AI Projects to Win More US Clients, 12 November 2026, pages 2 to 11. Agent purposes and operating rules come from this source; architecture and delivery estimates are proposed additions.
+S2  Current GTM constraints and memory requirements supplied in this conversation take precedence over conflicting source proposals.
+T1  Temporal Python developer guide: https://docs.temporal.io/develop/python
+T2  Temporal workflow execution: https://docs.temporal.io/workflow-execution
+T3  Microsoft architecture guidance on transactional outbox and idempotent consumers: https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs
+T4  Microsoft Graph calendar APIs: https://learn.microsoft.com/en-us/graph/api/calendar-getschedule and https://learn.microsoft.com/en-us/graph/api/calendar-post-events

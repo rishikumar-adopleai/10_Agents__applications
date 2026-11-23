@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.0",
+  "dataset_kind": "synthetic_test_data_with_mock_contacts",
+  "generated_at": "2026-11-17T05:00:00Z",
+  "organization_id": "org-demo-001",
+  "accounts": [
+    {
+      "account_id": "ACC-001",
+      "company": {
+        "name": "Northstar Health Systems",
+        "domain": "northstar-health.example",
+        "website": "https://northstar-health.example",
+        "industry": "Healthcare technology",
+        "country": "US"
+      },
+      "identity_verified": true,
+      "priority": {
+        "score": 86,
+        "tier": "high",
+        "rubric_version": "1.0",
+        "why_now": "Recent recruiting activity for AI engineering roles"
+      },
+      "signals": [
+        {
+          "signal_id": "SIG-001",
+          "type": "relevant_hiring",
+          "observed_fact": "Example job posting for AI engineers",
+          "observed_at": "2026-11-13T12:00:00Z",
+          "source": {
+            "url": "https://jobs.northstar-health.example/ai-engineer",
+            "source_type": "synthetic_job_post",
+            "retrieved_at": "2026-11-16T12:00:00Z"
+          },
+          "confidence": "test_only"
+        }
+      ],
+      "contacts": [
+        {
+          "contact_id": "CON-001",
+          "full_name": "Alex Morgan",
+          "job_title": "VP of Engineering",
+          "department": "Engineering",
+          "seniority": "VP",
+          "email": "alex.morgan@northstar-health.example",
+          "phone": null,
+          "data_source": "mock_apollo",
+          "verification_status": "synthetic_only",
+          "contact_eligibility": "test_only_not_authorized"
+        },
+        {
+          "contact_id": "CON-002",
+          "full_name": "Jordan Lee",
+          "job_title": "Director of AI",
+          "department": "AI",
+          "seniority": "Director",
+          "email": "jordan.lee@northstar-health.example",
+          "phone": null,
+          "data_source": "mock_apollo",
+          "verification_status": "synthetic_only",
+          "contact_eligibility": "test_only_not_authorized"
+        }
+      ],
+      "contact_eligibility": "test_only_not_authorized",
+      "research_status": "ready",
+      "last_researched_at": null
+    },
+    {
+      "account_id": "ACC-002",
+      "company": {
+        "name": "Cedarline Logistics",
+        "domain": "cedarline-logistics.example",
+        "website": "https://cedarline-logistics.example",
+        "industry": "Logistics",
+        "country": "US"
+      },
+      "identity_verified": true,
+      "priority": {
+        "score": 72,
+        "tier": "medium",
+        "rubric_version": "1.0",
+        "why_now": "Example expansion to a new distribution location"
+      },
+      "signals": [
+        {
+          "signal_id": "SIG-002",
+          "type": "expansion",
+          "observed_fact": "Example announcement of distribution expansion",
+          "observed_at": "2026-11-10T09:00:00Z",
+          "source": {
+            "url": "https://news.cedarline-logistics.example/expansion",
+            "source_type": "synthetic_press_release",
+            "retrieved_at": "2026-11-16T12:00:00Z"
+          },
+          "confidence": "test_only"
+        }
+      ],
+      "contacts": [
+        {
+          "contact_id": "CON-003",
+          "full_name": "Taylor Brooks",
+          "job_title": "Chief Operating Officer",
+          "department": "Operations",
+          "seniority": "C-level",
+          "email": "taylor.brooks@cedarline-logistics.example",
+          "phone": null,
+          "data_source": "mock_apollo",
+          "verification_status": "synthetic_only",
+          "contact_eligibility": "test_only_not_authorized"
+        },
+        {
+          "contact_id": "CON-004",
+          "full_name": "Casey Patel",
+          "job_title": "Director of Operations",
+          "department": "Operations",
+          "seniority": "Director",
+          "email": "casey.patel@cedarline-logistics.example",
+          "phone": null,
+          "data_source": "mock_apollo",
+          "verification_status": "synthetic_only",
+          "contact_eligibility": "test_only_not_authorized"
+        }
+      ],
+      "contact_eligibility": "test_only_not_authorized",
+      "research_status": "ready",
+      "last_researched_at": null
+    },
+    {
+      "account_id": "ACC-003",
+      "company": {
+        "name": "Silveroak Financial Services",
+        "domain": "silveroak-financial.example",
+        "website": "https://silveroak-financial.example",
+        "industry": "Financial services",
+        "country": "US"
+      },
+      "identity_verified": true,
+      "priority": {
+        "score": 64,
+        "tier": "medium",
+        "rubric_version": "1.0",
+        "why_now": "Example public mention of document-processing modernization"
+      },
+      "signals": [
+        {
+          "signal_id": "SIG-003",
+          "type": "modernization",
+          "observed_fact": "Example announcement about improving document operations",
+          "observed_at": "2026-11-09T09:00:00Z",
+          "source": {
+            "url": "https://silveroak-financial.example/news/modernization",
+            "source_type": "synthetic_website",
+            "retrieved_at": "2026-11-16T12:00:00Z"
+          },
+          "confidence": "test_only"
+        }
+      ],
+      "contacts": [
+        {
+          "contact_id": "CON-005",
+          "full_name": "Morgan Chen",
+          "job_title": "Chief Technology Officer",
+          "department": "Technology",
+          "seniority": "C-level",
+          "email": "morgan.chen@silveroak-financial.example",
+          "phone": null,
+          "data_source": "mock_apollo",
+          "verification_status": "synthetic_only",
+          "contact_eligibility": "test_only_not_authorized"
+        },
+        {
+          "contact_id": "CON-006",
+          "full_name": "Riley Davis",
+          "job_title": "Head of Document Operations",
+          "department": "Operations",
+          "seniority": "Head",
+          "email": null,
+          "phone": null,
+          "data_source": "mock_apollo",
+          "verification_status": "missing_contact_method",
+          "contact_eligibility": "blocked_missing_address"
+        }
+      ],
+      "contact_eligibility": "test_only_not_authorized",
+      "research_status": "ready",
+      "last_researched_at": null
+    }
+  ]
+}

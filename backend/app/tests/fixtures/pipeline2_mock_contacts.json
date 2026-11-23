@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0",
+  "dataset_kind": "synthetic_mock_contact_enrichment",
+  "organization_id": "org-demo-001",
+  "provider": "mock_apollo",
+  "live_api_calls": false,
+  "accounts": [
+    {
+      "account_id": "ACC-001",
+      "company_domain": "northstar-health.example",
+      "contacts": [
+        {
+          "contact_id": "CON-001",
+          "full_name": "Alex Morgan",
+          "job_title": "VP of Engineering",
+          "department": "Engineering",
+          "seniority": "VP",
+          "email": "alex.morgan@northstar-health.example",
+          "phone": null,
+          "data_source": "mock_apollo",
+          "verification_status": "synthetic_only",
+          "contact_eligibility": "test_only_not_authorized"
+        },
+        {
+          "contact_id": "CON-002",
+          "full_name": "Jordan Lee",
+          "job_title": "Director of AI",
+          "department": "AI",
+          "seniority": "Director",
+          "email": "jordan.lee@northstar-health.example",
+          "phone": null,
+          "data_source": "mock_apollo",
+          "verification_status": "synthetic_only",
+          "contact_eligibility": "test_only_not_authorized"
+        }
+      ]
+    },
+    {
+      "account_id": "ACC-002",
+      "company_domain": "cedarline-logistics.example",
+      "contacts": [
+        {
+          "contact_id": "CON-003",
+          "full_name": "Taylor Brooks",
+          "job_title": "Chief Operating Officer",
+          "department": "Operations",
+          "seniority": "C-level",
+          "email": "taylor.brooks@cedarline-logistics.example",
+          "phone": null,
+          "data_source": "mock_apollo",
+          "verification_status": "synthetic_only",
+          "contact_eligibility": "test_only_not_authorized"
+        },
+        {
+          "contact_id": "CON-004",
+          "full_name": "Casey Patel",
+          "job_title": "Director of Operations",
+          "department": "Operations",
+          "seniority": "Director",
+          "email": "casey.patel@cedarline-logistics.example",
+          "phone": null,
+          "data_source": "mock_apollo",
+          "verification_status": "synthetic_only",
+          "contact_eligibility": "test_only_not_authorized"
+        }
+      ]
+    },
+    {
+      "account_id": "ACC-003",
+      "company_domain": "silveroak-financial.example",
+      "contacts": [
+        {
+          "contact_id": "CON-005",
+          "full_name": "Morgan Chen",
+          "job_title": "Chief Technology Officer",
+          "department": "Technology",
+          "seniority": "C-level",
+          "email": "morgan.chen@silveroak-financial.example",
+          "phone": null,
+          "data_source": "mock_apollo",
+          "verification_status": "synthetic_only",
+          "contact_eligibility": "test_only_not_authorized"
+        },
+        {
+          "contact_id": "CON-006",
+          "full_name": "Riley Davis",
+          "job_title": "Head of Document Operations",
+          "department": "Operations",
+          "seniority": "Head",
+          "email": null,
+          "phone": null,
+          "data_source": "mock_apollo",
+          "verification_status": "missing_contact_method",
+          "contact_eligibility": "blocked_missing_address"
+        }
+      ]
+    }
+  ]
+}
